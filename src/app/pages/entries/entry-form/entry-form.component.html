@@ -1,0 +1,118 @@
+<nav aria-label="breadcrumb" class="mb-5">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+    <li class="breadcrumb-item"><a routerLink="/entries">Lançamentos</a></li>
+    <li class="breadcrumb-item active"> {{ pageTitle }}  </li>
+  </ol>
+</nav>
+
+
+<div class="row mb-4">
+  <div class="col-md-9">
+    <h1 class="h2 border-start pl-2">
+      {{ pageTitle }}
+    </h1>
+  </div>
+
+  <div class="col-md-3">
+    <a routerLink="/entries" class="btn btn-light float-end">
+      << Voltar
+    </a>
+  </div>
+</div>
+
+<form [formGroup]="entryForm" (ngSubmit)="submitForm()">
+
+  <div class="card">
+    <div class="card-header">
+      Informações sobre o lançamnento
+    </div>
+
+    <div class="card-body">
+
+
+      <div class="row">
+
+        <!--NAME-->
+        <div class="col-md-2">
+          <label for="type" class="form-label">Tipo</label>
+          <select name="type" id="type" formControlName="type" class="form-select">
+            <option [ngValue]="null" disabled>Selecione</option>
+            <option value="expense">Despesa</option>
+            <option value="revenue">Receita</option>
+          </select>
+
+          <div class="text-danger" *ngIf="entryForm.controls['type'].invalid && entryForm.controls['type'].touched">
+            <div *ngIf="entryForm.controls['type'].hasError('required')">Campo obrigatório</div>
+          </div>
+        </div>
+
+        <!--NAME-->
+        <div class="col-md-5">
+          <label for="name" class="form-label">Lançamento</label>
+          <input type="text" id="name" class="form-control" formControlName="name">
+
+          <div class="text-danger" *ngIf="entryForm.controls['name'].invalid && entryForm.controls['name'].touched">
+            <div *ngIf="entryForm.controls['name'].hasError('required')">dado obrigatório</div>
+            <div *ngIf="entryForm.controls['name'].hasError('minlength')">Deve ter no mínimo 2 caracteres</div>
+          </div>
+        </div>
+
+        <!--AMOUNT-->
+        <div class="col-md-3">
+          <label for="amount" class="form-label">Valor</label>
+          <div class="input-group">
+            <div class="input-group-text">R$</div>
+            <input [imask]="imaskConfig" type="text" id="amount" class="form-control text-end" formControlName="amount">
+          </div>
+
+          <div class="text-danger" *ngIf="entryForm.controls['amount'].invalid && entryForm.controls['amount'].touched">
+            <div *ngIf="entryForm.controls['amount'].hasError('required')">dado obrigatório</div>
+          </div>
+        </div>
+
+
+        <!--DATE-->
+        <div class="col-md-2 p-fluid mt-1">
+
+          <label for="date">Data</label>
+          <p-calendar
+            id="date"
+            formControlName="date"
+            inputStyleClass="form-control"
+            dataType="string>
+
+          </p-calendar>
+          <div class="text-danger" *ngIf="entryForm.controls['name'].invalid && entryForm.controls['name'].touched">
+            <div *ngIf="entryForm.controls['name'].hasError('required')">dado obrigatório</div>
+          </div>
+        </div>
+
+
+        <!--DESCRIPTION-->
+        <div class="col-md-8">
+          <label for="description" class="form-label">Descrição</label>
+          <input type="text" id="description" class="form-control" formControlName="description">
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="alert alert-danger mt-4" *ngIf="serverErrorMessages">
+    <strong>Erro no servidor:</strong>
+    <ul>
+      <li *ngFor="let error of serverErrorMessages">
+        {{ error }}
+      </li>
+    </ul>
+  </div>
+
+  <button [disabled]="submittingForm || entryForm.invalid" type="submit" class="btn btn-primary btn-lg float-end mt-3">
+    Salvar
+  </button>
+
+
+</form>
+
