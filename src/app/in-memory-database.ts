@@ -47,7 +47,7 @@ export class InMemoryDatabase implements InMemoryDbService {
         categoryId:  categories[0].id,
       } as Entry,
       {
-        id: 1,
+        id: 2,
         name: "Suplemento",
         description: "descricao",
         type: "revenue",
@@ -58,7 +58,7 @@ export class InMemoryDatabase implements InMemoryDbService {
         categoryId: categories[1].id,
       } as Entry,
       {
-        id: 1,
+        id: 3,
         name: "Salário na Empresa X",
         description: "descricao",
         type: "revenue",
@@ -69,7 +69,7 @@ export class InMemoryDatabase implements InMemoryDbService {
         categoryId: categories[2].id,
       } as Entry,
       {
-        id: 1,
+        id: 4,
         name: "Moradia",
         description: "descricao",
         type: "expense",
@@ -80,7 +80,7 @@ export class InMemoryDatabase implements InMemoryDbService {
         categoryId: categories[3].id,
       } as Entry,
       {
-        id: 1,
+        id: 5,
         name: "Jiu Jitsu",
         description: "descricao",
         type: "expense",

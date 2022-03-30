@@ -33,19 +33,19 @@
 
       <div class="row">
 
-        <!--NAME-->
+        <!--TYPE-->
         <div class="col-md-2">
           <label for="type" class="form-label">Tipo</label>
           <select name="type" id="type" formControlName="type" class="form-select">
-            <option [ngValue]="null" disabled>Selecione</option>
-            <option value="expense">Despesa</option>
-            <option value="revenue">Receita</option>
+            <option *ngFor="let option of types" [value]="option.value">{{ option.text }}</option>
           </select>
 
           <div class="text-danger" *ngIf="entryForm.controls['type'].invalid && entryForm.controls['type'].touched">
             <div *ngIf="entryForm.controls['type'].hasError('required')">Campo obrigatório</div>
           </div>
         </div>
+
+
 
         <!--NAME-->
         <div class="col-md-5">
@@ -80,20 +80,58 @@
             id="date"
             formControlName="date"
             inputStyleClass="form-control"
-            dataType="string>
+            dataType="string"
+            dateFormat="dd/mm/yy"
+            [showButtonBar]="true">
 
           </p-calendar>
-          <div class="text-danger" *ngIf="entryForm.controls['name'].invalid && entryForm.controls['name'].touched">
-            <div *ngIf="entryForm.controls['name'].hasError('required')">dado obrigatório</div>
+          <div class="text-danger" *ngIf="entryForm.controls['date'].invalid && entryForm.controls['date'].touched">
+            <div *ngIf="entryForm.controls['date'].hasError('required')">dado obrigatório</div>
+          </div>
+        </div>
+
+
+
+        <!--PAID-->
+        <div class="col-md-2">
+          <label class="form-label">Pago</label>
+          <div class="input-group">
+            <label (click)="entryForm.controls['paid'].setValue(true)"
+              [class.active]="entryForm.controls['paid'].value == true" class="btn btn-outline-info">
+              Pago
+            </label>
+            <label (click)="entryForm.controls['paid'].setValue(false)"
+              [class.active]="entryForm.controls['paid'].value == false"  class="btn btn-outline-info">
+              Pendente
+            </label>
+          </div>
+
+          <div class="text-danger" *ngIf="entryForm.controls['paid'].invalid && entryForm.controls['paid'].touched">
+            <div *ngIf="entryForm.controls['paid'].hasError('required')">dado obrigatório</div>
+          </div>
+        </div>
+
+
+        <!--CATEGORY ID-->
+        <div class="col-md-3">
+          <label for="categoryId" class="form-label">Categorias</label>
+          <select name="categoryId" id="categoryId" formControlName="categoryId" class="form-select">
+            <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+          </select>
+
+          <div class="text-danger" *ngIf="entryForm.controls['categoryId'].invalid && entryForm.controls['categoryId'].touched">
+            <div *ngIf="entryForm.controls['categoryId'].hasError('required')">Campo obrigatório</div>
           </div>
         </div>
 
 
         <!--DESCRIPTION-->
-        <div class="col-md-8">
+        <div class="col-md-7">
           <label for="description" class="form-label">Descrição</label>
           <input type="text" id="description" class="form-control" formControlName="description">
         </div>
+
+
 
       </div>
     </div>
@@ -112,7 +150,10 @@
   <button [disabled]="submittingForm || entryForm.invalid" type="submit" class="btn btn-primary btn-lg float-end mt-3">
     Salvar
   </button>
+<!--
 
-
+  <pre>
+    {{entryForm.value | json}}
+  </pre>-->
 </form>
 

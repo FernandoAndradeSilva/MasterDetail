@@ -7,6 +7,8 @@ import {EntryService} from "../shared/entry.service";
 import {switchMap} from "rxjs";
 
 import * as toastr from "toastr";
+import {Category} from "../../categories/shared/category.model";
+import {CategoryService} from "../../categories/shared/category.service";
 
 @Component({
   selector: 'app-entry-form',
@@ -20,27 +22,24 @@ import * as toastr from "toastr";
 
 export class EntryFormComponent implements OnInit, AfterContentChecked {
 
-
-
-
   currentAction: string | undefined;
   pageTitle: string | undefined;
   serverErrorMessages: string[] | undefined;
   submittingForm: boolean = false;
   entry: Entry = new Entry();
+  categories: Category[] = [];
+  types: Array<any> = [];
 
   entryForm: FormGroup = this.formBuilder.group({
     id: [null],
     name: [null, [Validators.required, Validators.minLength(2)]],
     description: [null],
-    type: [null , [Validators.required]],
+    type: ["expense" , [Validators.required]],
     amount: [null, [Validators.required]],
     date: [null , [Validators.required]],
-    paid: [null , [Validators.required]],
+    paid: [true , [Validators.required]],
     categoryId: [null , [Validators.required]]
   })
-
-
 
   imaskConfig = {
     mask: Number,
@@ -50,34 +49,21 @@ export class EntryFormComponent implements OnInit, AfterContentChecked {
     normalizeZeros: true,
     radix: ','
   }
-
-  ptBr = {
-    firstDayOfWeek: 0,
-    dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
-    dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-    dayNamesMin: ['Do', 'Se', 'Te', 'Qu', 'Qu', 'Se', 'Sá'],
-    monthNames: [
-      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho',
-      'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-    ],
-    monthNamesShort: [
-      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul',
-      'Ago', 'Set', 'Out', 'Nov', 'Dez'
-    ],
-    today: 'Hoje',
-    clear: 'Limpar'
-  };
-
   constructor(
     private entryService: EntryService,
     private route: ActivatedRoute,
     private router: Router,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private categoryService: CategoryService
   ) {
+
+
   }
 
   ngOnInit(): void {
     this.setCurrentAction();
+    this.loadTypes();
+    this.loadCategories();
     this.loadEntry();
   }
 
@@ -87,14 +73,22 @@ export class EntryFormComponent implements OnInit, AfterContentChecked {
 
   submitForm() {
     this.submittingForm = true;
-
     if(this.currentAction === 'new') {
       this.createEntry();
     } else if(this.currentAction === 'edit') {
       this.updateEntry();
     }
+  }
 
-
+  loadTypes() {
+      this.types = Object.entries(Entry.types).map(
+        ([value,text]) => {
+          return {
+            text: text,
+            value: value
+          }
+        }
+      )
   }
 
   private setCurrentAction() {
@@ -167,6 +161,12 @@ export class EntryFormComponent implements OnInit, AfterContentChecked {
       this.serverErrorMessages = ["Falha na comunicação com o servidor. Tente mais tarde."]
     }
 
+  }
+
+  private loadCategories() {
+    this.categoryService.getAll().subscribe(
+      categories =>  this.categories = categories
+    );
   }
 }
 
