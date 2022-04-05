@@ -1,27 +1,17 @@
-<nav aria-label="breadcrumb" class="mb-5">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
-    <li class="breadcrumb-item"><a routerLink="/entries">Lançamentos</a></li>
-    <li class="breadcrumb-item active"> {{ pageTitle }}  </li>
-  </ol>
-</nav>
+<app-bread-cumb
+  [items]="[{text: 'Lançamentos', link: '/entries'},
+            {text: pageTitle}]"
+></app-bread-cumb>
 
 
-<div class="row mb-4">
-  <div class="col-md-9">
-    <h1 class="h2 border-start pl-2">
-      {{ pageTitle }}
-    </h1>
-  </div>
+<app-page-header *ngIf="pageTitle"
+                 [page-title]="pageTitle"
+                 button-text="<< Voltar"
+                 button-link="/entries"
+                 button-class="btn-light"
+></app-page-header>
 
-  <div class="col-md-3">
-    <a routerLink="/entries" class="btn btn-light float-end">
-      << Voltar
-    </a>
-  </div>
-</div>
-
-<form [formGroup]="entryForm" (ngSubmit)="submitForm()">
+<form [formGroup]="resourceForm" (ngSubmit)="submitForm()">
 
   <div class="card">
     <div class="card-header">
@@ -40,9 +30,8 @@
             <option *ngFor="let option of types" [value]="option.value">{{ option.text }}</option>
           </select>
 
-          <div class="text-danger" *ngIf="entryForm.controls['type'].invalid && entryForm.controls['type'].touched">
-            <div *ngIf="entryForm.controls['type'].hasError('required')">Campo obrigatório</div>
-          </div>
+          <app-form-field-error [form-control]="resourceForm.controls['type']"> </app-form-field-error>
+
         </div>
 
 
@@ -52,10 +41,8 @@
           <label for="name" class="form-label">Lançamento</label>
           <input type="text" id="name" class="form-control" formControlName="name">
 
-          <div class="text-danger" *ngIf="entryForm.controls['name'].invalid && entryForm.controls['name'].touched">
-            <div *ngIf="entryForm.controls['name'].hasError('required')">dado obrigatório</div>
-            <div *ngIf="entryForm.controls['name'].hasError('minlength')">Deve ter no mínimo 2 caracteres</div>
-          </div>
+          <app-form-field-error [form-control]="resourceForm.controls['name']"> </app-form-field-error>
+
         </div>
 
         <!--AMOUNT-->
@@ -66,9 +53,7 @@
             <input [imask]="imaskConfig" type="text" id="amount" class="form-control text-end" formControlName="amount">
           </div>
 
-          <div class="text-danger" *ngIf="entryForm.controls['amount'].invalid && entryForm.controls['amount'].touched">
-            <div *ngIf="entryForm.controls['amount'].hasError('required')">dado obrigatório</div>
-          </div>
+          <app-form-field-error [form-control]="resourceForm.controls['amount']"> </app-form-field-error>
         </div>
 
 
@@ -85,9 +70,7 @@
             [showButtonBar]="true">
 
           </p-calendar>
-          <div class="text-danger" *ngIf="entryForm.controls['date'].invalid && entryForm.controls['date'].touched">
-            <div *ngIf="entryForm.controls['date'].hasError('required')">dado obrigatório</div>
-          </div>
+          <app-form-field-error [form-control]="resourceForm.controls['date']"> </app-form-field-error>
         </div>
 
 
@@ -96,19 +79,17 @@
         <div class="col-md-2">
           <label class="form-label">Pago</label>
           <div class="input-group">
-            <label (click)="entryForm.controls['paid'].setValue(true)"
-              [class.active]="entryForm.controls['paid'].value == true" class="btn btn-outline-info">
+            <label (click)="resourceForm.controls['paid'].setValue(true)"
+              [class.active]="resourceForm.controls['paid'].value == true" class="btn btn-outline-info">
               Pago
             </label>
-            <label (click)="entryForm.controls['paid'].setValue(false)"
-              [class.active]="entryForm.controls['paid'].value == false"  class="btn btn-outline-info">
+            <label (click)="resourceForm.controls['paid'].setValue(false)"
+              [class.active]="resourceForm.controls['paid'].value == false"  class="btn btn-outline-info">
               Pendente
             </label>
           </div>
 
-          <div class="text-danger" *ngIf="entryForm.controls['paid'].invalid && entryForm.controls['paid'].touched">
-            <div *ngIf="entryForm.controls['paid'].hasError('required')">dado obrigatório</div>
-          </div>
+          <app-form-field-error [form-control]="resourceForm.controls['paid']"> </app-form-field-error>
         </div>
 
 
@@ -116,12 +97,11 @@
         <div class="col-md-3">
           <label for="categoryId" class="form-label">Categorias</label>
           <select name="categoryId" id="categoryId" formControlName="categoryId" class="form-select">
+            <option [value]="null" selected disabled>Selecione</option>
             <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
           </select>
 
-          <div class="text-danger" *ngIf="entryForm.controls['categoryId'].invalid && entryForm.controls['categoryId'].touched">
-            <div *ngIf="entryForm.controls['categoryId'].hasError('required')">Campo obrigatório</div>
-          </div>
+          <app-form-field-error [form-control]="resourceForm.controls['categoryId']"> </app-form-field-error>
         </div>
 
 
@@ -131,29 +111,15 @@
           <input type="text" id="description" class="form-control" formControlName="description">
         </div>
 
-
-
       </div>
     </div>
-
   </div>
 
-  <div class="alert alert-danger mt-4" *ngIf="serverErrorMessages">
-    <strong>Erro no servidor:</strong>
-    <ul>
-      <li *ngFor="let error of serverErrorMessages">
-        {{ error }}
-      </li>
-    </ul>
-  </div>
+  <app-server-error-messages [server-error-messages]="serverErrorMessages"> </app-server-error-messages>
 
-  <button [disabled]="submittingForm || entryForm.invalid" type="submit" class="btn btn-primary btn-lg float-end mt-3">
+  <button [disabled]="submittingForm || resourceForm.invalid" type="submit" class="btn btn-primary btn-lg float-end mt-3">
     Salvar
   </button>
-<!--
 
-  <pre>
-    {{entryForm.value | json}}
-  </pre>-->
 </form>
 

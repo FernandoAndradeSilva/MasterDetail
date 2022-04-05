@@ -27,6 +27,7 @@
     "chart.js": "^3.7.1",
     "currency-formatter": "^1.5.9",
     "jquery": "^3.6.0",
+    "moment": "^2.29.2",
     "primeicons": "^5.0.0",
     "primeng": "^13.3.0",
     "rxjs": "~7.5.0",
